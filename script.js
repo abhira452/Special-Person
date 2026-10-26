@@ -21,7 +21,7 @@ const popupX = document.getElementById("popup-x");
 const WHATSAPP_NUMBER = "917651828165";
 
 const WHATSAPP_MESSAGE =
-  "Hey Pooja Rai 💖 Thank you for this beautiful moment! 🌸";
+  "Hey Mr. 💖 Thank you for this beautiful moment! 🌸";
 
 let noClicks = 0;
 let accepted = false;
