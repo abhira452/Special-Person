@@ -1,0 +1,550 @@
+
+:root {
+  --pink: #ff4f91;
+  --deep: #c51e65;
+  --cream: #fff8fb;
+  --text: #71304d;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  min-height: 100%;
+}
+
+body {
+  min-height: 100vh;
+  min-height: 100svh;
+  overflow-x: hidden;
+  font-family: "Nunito", sans-serif;
+  color: var(--text);
+  background: linear-gradient(
+    135deg, #fff5fa, #ffe3ef, #f9e5ff, #fff8f0
+  );
+}
+
+#three-bg {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.glow {
+  position: fixed;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: .45;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.glow-one {
+  top: -100px;
+  left: -80px;
+  background: #ff80b5;
+}
+
+.glow-two {
+  right: -100px;
+  bottom: -100px;
+  background: #cba1ff;
+}
+
+.page {
+  min-height: 100vh;
+  min-height: 100svh;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 28px 16px;
+}
+
+.card {
+  width: min(100%, 620px);
+  position: relative;
+  text-align: center;
+  padding: clamp(27px, 6vw, 55px) clamp(19px, 6vw, 55px);
+  border: 1px solid rgba(255,255,255,.85);
+  border-radius: 32px;
+  background: rgba(255,255,255,.72);
+  box-shadow:
+    0 25px 80px rgba(194,57,115,.15),
+    inset 0 0 30px rgba(255,255,255,.5);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  animation: appear 1s ease both;
+}
+
+@keyframes appear {
+  from {
+    opacity: 0;
+    transform: translateY(25px) scale(.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.top-label {
+  display: inline-block;
+  padding: 8px 16px;
+  border-radius: 50px;
+  background: #ffe5ef;
+  color: #cb3977;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 2px;
+}
+
+.heart-icon {
+  margin: 22px auto 10px;
+  font-size: clamp(48px, 10vw, 76px);
+  display: block;
+  filter: drop-shadow(0 8px 15px #ff9bc5);
+  animation: heartbeat 1.7s infinite;
+}
+
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1); }
+  14% { transform: scale(1.13); }
+  28% { transform: scale(1); }
+  42% { transform: scale(1.09); }
+}
+
+h1 {
+  font-family: "Great Vibes", cursive;
+  color: var(--deep);
+  font-size: clamp(47px, 10vw, 76px);
+  font-weight: 400;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.subtitle {
+  font-size: 13px;
+  font-weight: 900;
+  color: #e45b91;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-top: 10px;
+}
+
+.message {
+  min-height: 130px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: 23px 0 12px;
+  font-size: clamp(16px, 3.6vw, 19px);
+  line-height: 1.8;
+  font-weight: 700;
+}
+
+.message strong {
+  color: #d82e76;
+}
+
+.small-note {
+  font-size: 12px;
+  color: #b76c8d;
+  margin-bottom: 25px;
+  line-height: 1.7;
+}
+
+.buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  min-height: 55px;
+}
+
+.btn {
+  min-height: 53px;
+  min-width: 155px;
+  padding: 14px 23px;
+  border: none;
+  border-radius: 50px;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 900;
+  cursor: pointer;
+  transition:
+    transform .25s ease,
+    box-shadow .25s ease,
+    background .25s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn:focus-visible,
+.popup-close:focus-visible,
+.popup-x:focus-visible {
+  outline: 3px solid #b82568;
+  outline-offset: 4px;
+}
+
+.accept {
+  color: white;
+  background: linear-gradient(135deg, #ff76a9, #ec347d);
+  box-shadow: 0 10px 25px rgba(236,52,125,.3);
+}
+
+.accept:hover {
+  box-shadow: 0 14px 30px rgba(236,52,125,.42);
+}
+
+.no {
+  color: #b34373;
+  background: white;
+  border: 1px solid #ffd1e3;
+  box-shadow: 0 6px 18px rgba(180,67,115,.09);
+}
+
+/* Moving NO button */
+
+#no-btn {
+  position: relative;
+  z-index: 5;
+  touch-action: manipulation;
+}
+
+#no-btn.running-away {
+  position: fixed;
+  z-index: 100;
+  min-width: 0;
+  width: auto;
+  max-width: calc(100vw - 24px);
+  white-space: nowrap;
+  padding: 8px 12px;
+  font-size: 11px;
+  transition:
+    left .18s ease,
+    top .18s ease,
+    transform .2s ease,
+    font-size .2s ease;
+  box-shadow: 0 8px 28px rgba(255,50,130,.3);
+}
+
+/* Glowing YES button */
+
+#yes-btn {
+  position: relative;
+  z-index: 6;
+  transform-origin: center;
+}
+
+#yes-btn.yes-glowing {
+  animation: yesGlow .8s ease-in-out infinite alternate;
+}
+
+@keyframes yesGlow {
+  from {
+    box-shadow: 0 0 12px #ff75ae, 0 0 25px #ff9bc5;
+    filter: brightness(1);
+  }
+  to {
+    box-shadow: 0 0 24px #ff438e, 0 0 48px #ff75ae;
+    filter: brightness(1.1);
+  }
+}
+
+.footer {
+  margin-top: 28px;
+  font-size: 12px;
+  color: #b66c8c;
+}
+
+.footer span {
+  color: #ed4d8b;
+}
+
+.signature {
+  font-family: "Great Vibes", cursive;
+  font-size: 28px;
+  color: #e13b7d;
+  margin-top: 12px;
+}
+
+/* Flower shower */
+
+#flower-layer {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.flower {
+  position: absolute;
+  top: -70px;
+  will-change: transform, opacity;
+  animation: flowerFall linear forwards;
+  filter: drop-shadow(0 3px 4px rgba(160,40,90,.12));
+}
+
+@keyframes flowerFall {
+  0% {
+    transform: translate3d(0,-5vh,0) rotate(0deg) scale(.6);
+    opacity: 0;
+  }
+  10% { opacity: 1; }
+  100% {
+    transform: translate3d(var(--drift),115vh,0)
+      rotate(var(--spin)) scale(1.15);
+    opacity: .85;
+  }
+}
+
+/* YES celebration */
+
+.success-card {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  padding: 20px;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,235,245,.64);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.success-card.show {
+  display: flex;
+  animation: appear .5s ease both;
+}
+
+.success-inner {
+  width: min(100%, 500px);
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 40px 25px;
+  border-radius: 30px;
+  text-align: center;
+  background: #fffafd;
+  border: 1px solid white;
+  box-shadow: 0 25px 90px rgba(194,57,115,.25);
+}
+
+.success-flowers {
+  font-size: 65px;
+}
+
+.success-inner h2 {
+  font-family: "Great Vibes", cursive;
+  font-size: clamp(43px, 9vw, 65px);
+  color: #d52670;
+  font-weight: 400;
+}
+
+.success-inner p {
+  line-height: 1.9;
+  margin: 15px 0 25px;
+  font-size: 16px;
+}
+
+#celebrate-btn {
+  width: 100%;
+}
+
+/* Decorative WhatsApp popup */
+
+.whatsapp-popup {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  background: rgba(88,27,57,.38);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.whatsapp-popup.show {
+  display: flex;
+  animation: popupFadeIn .3s ease both;
+}
+
+.whatsapp-popup-card {
+  position: relative;
+  width: min(100%, 410px);
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 35px 24px 25px;
+  text-align: center;
+  border: 1px solid white;
+  border-radius: 30px;
+  background: linear-gradient(145deg,#fffafd,#ffe7f1,#f8eaff);
+  box-shadow: 0 25px 80px rgba(164,40,98,.3);
+  animation: popupCardIn .45s cubic-bezier(.2,.8,.2,1) both;
+}
+
+.popup-x {
+  position: absolute;
+  top: 12px;
+  right: 15px;
+  width: 35px;
+  height: 35px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255,255,255,.8);
+  color: #a44b75;
+  font-size: 26px;
+  cursor: pointer;
+}
+
+.popup-decoration {
+  font-size: 23px;
+  margin-bottom: 14px;
+  letter-spacing: 7px;
+}
+
+.whatsapp-icon {
+  width: 76px;
+  height: 76px;
+  display: grid;
+  place-items: center;
+  margin: 0 auto 18px;
+  border-radius: 50%;
+  background: white;
+  font-size: 39px;
+  box-shadow: 0 8px 25px rgba(220,65,130,.15);
+  animation: popupHeartBeat 1.5s infinite;
+}
+
+.whatsapp-popup-card h2 {
+  font-family: "Great Vibes", cursive;
+  font-size: clamp(34px,8vw,44px);
+  line-height: 1.25;
+  color: #c51e65;
+  font-weight: 400;
+}
+
+.whatsapp-popup-card p {
+  margin: 15px 0 23px;
+  color: #82425f;
+  font-size: 15px;
+  line-height: 1.9;
+}
+
+.popup-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.popup-buttons .btn {
+  width: 100%;
+}
+
+.popup-close {
+  min-height: 44px;
+  padding: 10px;
+  border: none;
+  border-radius: 30px;
+  background: transparent;
+  color: #a44b75;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.popup-footer {
+  margin-top: 16px;
+  color: #bc7293;
+  font-size: 12px;
+}
+
+@keyframes popupFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes popupCardIn {
+  from {
+    opacity: 0;
+    transform: translateY(25px) scale(.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes popupHeartBeat {
+  0%,100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}
+
+/* Responsive design */
+
+@media (max-width: 420px) {
+  .page {
+    padding: 16px 12px;
+  }
+
+  .card {
+    border-radius: 25px;
+    padding: 28px 18px;
+  }
+
+  .top-label {
+    font-size: 9px;
+    letter-spacing: 1.5px;
+  }
+
+  .buttons {
+    gap: 10px;
+  }
+
+  .btn {
+    min-width: 0;
+    flex: 1 1 125px;
+    padding: 13px 12px;
+  }
+
+  .message {
+    min-height: 145px;
+  }
+
+  .signature {
+    font-size: 25px;
+  }
+
+  .success-inner {
+    padding: 32px 20px;
+  }
+
+  .whatsapp-popup-card {
+    padding: 35px 20px 23px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .heart-icon,
+  #yes-btn.yes-glowing,
+  .whatsapp-icon {
+    animation: none;
+  }
+
+  .flower {
+    animation-duration: 2s;
+  }
+}

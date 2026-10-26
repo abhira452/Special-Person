@@ -1,0 +1,127 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#fff0f6">
+  <meta name="description" content="A romantic interactive proposal made with love for Pooja Rai.">
+  <title>For Pooja Rai 💖</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <canvas id="three-bg" aria-hidden="true"></canvas>
+
+  <div class="glow glow-one"></div>
+  <div class="glow glow-two"></div>
+  <div id="flower-layer" aria-hidden="true"></div>
+
+  <main class="page">
+    <section class="card" id="proposal">
+      <span class="top-label">♡ A LITTLE SOMETHING FOR YOU ♡</span>
+
+      <span class="heart-icon" id="main-heart">💗</span>
+
+      <h1>Hey Pooja Rai</h1>
+      <p class="subtitle">Can I tell you a secret?</p>
+
+      <div class="message" aria-live="polite">
+        <div id="message-text">
+          Every time I think about you,<br>
+          my heart whispers one little question...
+          <br><strong>Will you be mine? 🌹</strong>
+        </div>
+      </div>
+
+      <p class="small-note" id="hint">
+        Choose honestly... but give my heart a chance. 🥹
+      </p>
+
+      <div class="buttons">
+        <button class="btn accept" id="yes-btn" type="button">
+          Yes, I will! 💖
+        </button>
+
+        <button class="btn no" id="no-btn" type="button">
+          Not yet 🙈
+        </button>
+      </div>
+
+      <p class="footer">Made with <span>♥</span>, just for you</p>
+      <div class="signature">Someone who thinks you're special ✨</div>
+    </section>
+  </main>
+
+  <!-- YES celebration -->
+  <section class="success-card" id="success"
+           role="dialog" aria-modal="true"
+           aria-labelledby="success-title">
+    <div class="success-inner">
+      <div class="success-flowers" aria-hidden="true">💐💖🌹</div>
+
+      <h2 id="success-title">She said YES!</h2>
+
+      <p>
+        Pooja Rai, you just made this moment magical! 💕
+        <br>
+        <strong>A beautiful new memory begins here.</strong>
+        <br>
+        May your days be filled with flowers, laughter,
+        and a thousand little reasons to smile. 🌷
+      </p>
+
+      <button class="btn accept" id="celebrate-btn" type="button">
+        💚 Message Me on WhatsApp
+      </button>
+    </div>
+  </section>
+
+  <!-- Decorative WhatsApp popup -->
+  <section class="whatsapp-popup" id="whatsapp-popup"
+           role="dialog" aria-modal="true"
+           aria-labelledby="whatsapp-popup-title"
+           aria-hidden="true">
+    <div class="whatsapp-popup-card">
+      <button class="popup-x" id="popup-x" type="button"
+              aria-label="Close popup">×</button>
+
+      <div class="popup-decoration" aria-hidden="true">
+        💌 🌸 💖
+      </div>
+
+      <div class="whatsapp-icon" aria-hidden="true">💚</div>
+
+      <h2 id="whatsapp-popup-title">One Last Little Thing...</h2>
+
+      <p>
+        Pooja Rai, you've made this moment so special! 🥹💕
+        <br>
+        There's a little message waiting for you on WhatsApp.
+      </p>
+
+      <div class="popup-buttons">
+        <button class="btn accept" id="open-whatsapp" type="button">
+          Open WhatsApp 💚
+        </button>
+
+        <button class="popup-close" id="close-whatsapp-popup" type="button">
+          Maybe Later 🌷
+        </button>
+      </div>
+
+      <div class="popup-footer">Made with endless love 💗</div>
+    </div>
+  </section>
+
+  <!-- External Three.js library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <!-- Website functionality -->
+  <script src="script.js"></script>
+</body>
+</html>
