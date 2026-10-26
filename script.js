@@ -17,8 +17,7 @@ const openWhatsAppBtn = document.getElementById("open-whatsapp");
 const closeWhatsAppPopup = document.getElementById("close-whatsapp-popup");
 const popupX = document.getElementById("popup-x");
 
-// Replace with your WhatsApp number including country code.
-// Example India: 919876543210 (no +, spaces or dashes).
+// WhatsApp number with country code, without +, spaces or dashes.
 const WHATSAPP_NUMBER = "917651828165";
 
 const WHATSAPP_MESSAGE =
@@ -26,8 +25,12 @@ const WHATSAPP_MESSAGE =
 
 let noClicks = 0;
 let accepted = false;
+let noIsHidden = false;
 let flowerTimer = null;
 let previousFocus = null;
+
+// NO stays for 7 clicks; hides on the 8th click.
+const NO_HIDE_AFTER = 15;
 
 const messages = [
   {
@@ -81,13 +84,13 @@ const messages = [
 ];
 
 const noLabels = [
-  "Still thinking? 🌸",
-  "Ask me again 💌",
-  "Maybe this time? 💗",
+  "Not Yet? 🌸",
+  "Still thinking? 💌",
+  "Ask Me Again? 💗",
   "Catch me! 🙈",
   "Too slow! 🌷",
   "Try again! 💕",
-  "Almost! 🎀",
+  "Not Now! 🎀",
   "One tiny yes? 🥹",
   "Oops, over here! 🌹",
   "Your admirer awaits 💖"
@@ -96,18 +99,133 @@ const noLabels = [
 
 /* ==========================================
    2. NO BUTTON MOVEMENT
+   First 2 clicks: stays in place
+   Clicks 3–7: moves but remains visible
+   Click 8: hides
 ========================================== */
 
 function moveNoButton() {
-  if (accepted) return;
+  if (accepted || noIsHidden) return;
 
-  if (!noBtn.classList.contains("running-away")) {
-    const rect = noBtn.getBoundingClientRect();
+  // Don't move before the third click.
+  if (noClicks <= 2) return;
 
-    noBtn.classList.add("running-away");
-    noBtn.style.left = rect.left + "px";
-    noBtn.style.top = rect.top + "px";
+  // Hide only after the first 7 clicks.
+  if (noClicks > NO_HIDE_AFTER) {
+    noIsHidden = true;
+    noBtn.style.display = "none";
+
+    yesBtn.classList.add("yes-glowing");
+    yesBtn.style.transform = "scale(1.3)";
+    return;
   }
+
+  const padding = 12;
+  const rect = noBtn.getBoundingClientRect();
+
+  // Switch to fixed positioning so the button can move
+  // within the visible screen on mobile and desktop.
+  noBtn.classList.add("running-away");
+  noBtn.style.position = "fixed";
+  noBtn.style.zIndex = "999";
+  noBtn.style.display = "block";
+
+  const buttonWidth = rect.width;
+  const buttonHeight = rect.height;
+
+  const maxX = Math.max(
+    padding,
+    window.innerWidth - buttonWidth - padding
+  );
+
+  const maxY = Math.max(
+    padding,
+    window.innerHeight - buttonHeight - padding
+  );
+
+  let x = padding + Math.random() * (maxX - padding);
+  let y = padding + Math.random() * (maxY - padding);
+
+  // Keep NO away from the YES button.
+  const yesRect = yesBtn.getBoundingClientRect();
+
+  const overlapsYes =
+    x < yesRect.right + 15 &&
+    x + buttonWidth > yesRect.left - 15 &&
+    y < yesRect.bottom + 15 &&
+    y + buttonHeight > yesRect.top - 15;
+
+  if (overlapsYes) {
+    x = x < window.innerWidth / 2
+      ? Math.max(padding, window.innerWidth - buttonWidth - padding)
+      : padding;
+
+    y = Math.max(
+      padding,
+      Math.min(y + 100, maxY)
+    );
+  }
+
+  noBtn.style.left = `${x}px`;
+  noBtn.style.top = `${y}px`;
+
+  // Make YES grow and glow.
+  yesBtn.classList.add("yes-glowing");
+
+  const scale = Math.min(1 + noClicks * 0.035, 1.3);
+  yesBtn.style.transform = `scale(${scale})`;
+}
+
+noBtn.addEventListener("click", () => {
+  if (accepted || noIsHidden) return;
+
+  noClicks++;
+
+  // Update the romantic message.
+  const message = messages[(noClicks - 1) % messages.length];
+
+  messageText.innerHTML = message.text;
+  hint.textContent = message.hint;
+
+  // Update NO button label.
+  noBtn.textContent =
+    noLabels[(noClicks - 1) % noLabels.length];
+
+  // Change the heart emoji.
+  mainHeart.textContent =
+    ["💗", "💖", "💘", "💕", "💓"][noClicks % 5];
+
+  if (noClicks <= 2) {
+    // First two clicks: keep NO in its original position.
+    noBtn.classList.remove("running-away");
+    noBtn.style.position = "";
+    noBtn.style.left = "";
+    noBtn.style.top = "";
+    noBtn.style.zIndex = "";
+    noBtn.style.display = "";
+  } else if (noClicks <= NO_HIDE_AFTER) {
+    // Clicks 3 through 7: move the button.
+    moveNoButton();
+  } else {
+    // Eighth click: hide NO.
+    moveNoButton();
+  }
+
+  // YES gradually grows.
+  const scale = Math.min(1 + noClicks * 0.035, 1.3);
+  yesBtn.style.transform = `scale(${scale})`;
+
+  if (noClicks >= 3) {
+    yesBtn.classList.add("yes-glowing");
+  }
+});
+
+// Intentionally no pointerenter or pointerdown listeners.
+// This prevents the button moving before a tap on mobile.
+
+// Keep the moving button within the viewport after resizing.
+window.addEventListener("resize", () => {
+  if (accepted || noIsHidden || noClicks < 3) return;
 
   const rect = noBtn.getBoundingClientRect();
   const padding = 12;
@@ -122,92 +240,11 @@ function moveNoButton() {
     window.innerHeight - rect.height - padding
   );
 
-  let x = padding + Math.random() * (maxX - padding);
-  let y = padding + Math.random() * (maxY - padding);
+  noBtn.style.left =
+    `${Math.max(padding, Math.min(rect.left, maxX))}px`;
 
-  // Avoid placing NO directly over YES.
-  const yesRect = yesBtn.getBoundingClientRect();
-
-  const overlapsYes =
-    x < yesRect.right + 15 &&
-    x + rect.width > yesRect.left - 15 &&
-    y < yesRect.bottom + 15 &&
-    y + rect.height > yesRect.top - 15;
-
-  if (overlapsYes) {
-    x = x < window.innerWidth / 2
-      ? Math.max(padding, window.innerWidth - rect.width - padding)
-      : padding;
-
-    y = Math.max(
-      padding,
-      Math.min(y + 100, window.innerHeight - rect.height - padding)
-    );
-  }
-
-  noBtn.style.left = x + "px";
-  noBtn.style.top = y + "px";
-
-  // YES grows and shines after NO starts moving.
-  yesBtn.classList.add("yes-glowing");
-
-  const scale = Math.min(1 + noClicks * 0.045, 1.3);
-  yesBtn.style.transform = `scale(${scale})`;
-}
-
-noBtn.addEventListener("click", () => {
-  if (accepted) return;
-
-  noClicks++;
-
-  const message = messages[(noClicks - 1) % messages.length];
-
-  messageText.innerHTML = message.text;
-  hint.textContent = message.hint;
-
-  noBtn.textContent = noLabels[(noClicks - 1) % noLabels.length];
-
-  mainHeart.textContent =
-    ["💗", "💖", "💘", "💕", "💓"][noClicks % 5];
-
-  // Start shrinking and moving after the third NO click.
-  if (noClicks >= 3) {
-    moveNoButton();
-  }
-});
-
-// Desktop pointer interaction.
-noBtn.addEventListener("pointerenter", (event) => {
-  if (accepted || noClicks < 3) return;
-  if (event.pointerType === "touch") return;
-
-  moveNoButton();
-});
-
-// Mobile touch interaction.
-noBtn.addEventListener("pointerdown", (event) => {
-  if (accepted || noClicks < 3) return;
-  if (event.pointerType !== "touch") return;
-
-  event.preventDefault();
-  moveNoButton();
-});
-
-// Keep the moving button inside the viewport.
-window.addEventListener("resize", () => {
-  if (accepted || noClicks < 3) return;
-
-  const rect = noBtn.getBoundingClientRect();
-
-  noBtn.style.left = Math.max(
-    12,
-    Math.min(rect.left, window.innerWidth - rect.width - 12)
-  ) + "px";
-
-  noBtn.style.top = Math.max(
-    12,
-    Math.min(rect.top, window.innerHeight - rect.height - 12)
-  ) + "px";
+  noBtn.style.top =
+    `${Math.max(padding, Math.min(rect.top, maxY))}px`;
 });
 
 
@@ -274,8 +311,6 @@ yesBtn.addEventListener("click", () => {
 });
 
 celebrateBtn.addEventListener("click", () => {
-  // Show the decorative WhatsApp popup instead of
-  // navigating directly to WhatsApp.
   previousFocus = celebrateBtn;
 
   whatsappPopup.classList.add("show");
@@ -301,7 +336,7 @@ function closeWhatsAppDialog() {
 closeWhatsAppPopup.addEventListener("click", closeWhatsAppDialog);
 popupX.addEventListener("click", closeWhatsAppDialog);
 
-// Clicking outside the popup card closes the dialog.
+// Clicking outside the popup card closes it.
 whatsappPopup.addEventListener("click", (event) => {
   if (event.target === whatsappPopup) {
     closeWhatsAppDialog();
@@ -310,7 +345,10 @@ whatsappPopup.addEventListener("click", (event) => {
 
 // Escape key closes the popup.
 document.addEventListener("keydown", (event) => {
-  if (event.key === "Escape" && whatsappPopup.classList.contains("show")) {
+  if (
+    event.key === "Escape" &&
+    whatsappPopup.classList.contains("show")
+  ) {
     closeWhatsAppDialog();
   }
 });
@@ -333,18 +371,9 @@ openWhatsAppBtn.addEventListener("click", () => {
     `https://wa.me/${WHATSAPP_NUMBER}?text=` +
     encodeURIComponent(WHATSAPP_MESSAGE);
 
-  // Open from the user's direct click to reduce popup blocking.
-  const whatsappTab = window.open(
-    url,
-    "_blank",
-    "noopener,noreferrer"
-  );
+  window.open(url, "_blank", "noopener,noreferrer");
 
-  // Close the decorative popup after the click.
   closeWhatsAppDialog();
-
-  // A null return can also occur because of noopener.
-  // The browser handles whether the destination can open.
 });
 
 
@@ -369,8 +398,8 @@ document.addEventListener("visibilitychange", () => {
 (function initThree() {
   const canvas = document.getElementById("three-bg");
 
-  if (typeof THREE === "undefined") {
-    canvas.style.display = "none";
+  if (!canvas || typeof THREE === "undefined") {
+    if (canvas) canvas.style.display = "none";
     return;
   }
 
@@ -488,7 +517,6 @@ document.addEventListener("visibilitychange", () => {
     });
 
   } catch (error) {
-    // The proposal remains usable without WebGL.
     canvas.style.display = "none";
     console.error("Three.js initialization failed:", error);
   }
