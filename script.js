@@ -84,8 +84,8 @@ const messages = [
 ];
 
 const noLabels = [
-  "Not Yet? 🌸",
-  "Still thinking? 💌",
+  "Nooooo? 🌸",
+  "Oops Yrrr? 💌",
   "Ask Me Again? 💗",
   "Catch me! 🙈",
   "Too slow! 🌷",
